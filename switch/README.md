@@ -14,7 +14,7 @@ All face, bumper and shoulder buttons are mapped accordingly
 - PS Button: (-)
 - OPTIONS: (+)
 - Touchpad: touchscreen<br>
-(to activate a press, swipe or press on a border/side of the touchscreen)
+(to activate a press, swipe or press on a side/border of the touchscreen)
 
 Nintendo Switch build instructions
 ==================================
