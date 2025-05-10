@@ -455,7 +455,7 @@ cont:
 		uint16_t x = sw_state.touches[i].x * ((float)DS4_TRACKPAD_MAX_X / (float)SWITCH_TOUCHSCREEN_MAX_X);
 		uint16_t y = sw_state.touches[i].y * ((float)DS4_TRACKPAD_MAX_Y / (float)SWITCH_TOUCHSCREEN_MAX_Y);
 		// use nintendo switch border's 5% to trigger the touchpad button
-		if(x <= (DS4_TRACKPAD_MAX_X * 0.05) || x >= (DS4_TRACKPAD_MAX_X * 0.95) || y <= (DS4_TRACKPAD_MAX_Y * 0.05) || y >= (DS4_TRACKPAD_MAX_Y * 0.95))
+		if(x <= (DS4_TRACKPAD_MAX_X * 0.10) || x >= (DS4_TRACKPAD_MAX_X * 0.90) || y <= (DS4_TRACKPAD_MAX_Y * 0.10) || y >= (DS4_TRACKPAD_MAX_Y * 0.90))
 			chiaki_state->buttons |= CHIAKI_CONTROLLER_BUTTON_TOUCHPAD; // touchscreen
 
 		auto it = finger_id_touch_id->find(sw_state.touches[i].finger_id);
