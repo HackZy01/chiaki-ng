@@ -1,3 +1,21 @@
+
+<img src="https://github.com/user-attachments/assets/be3e36b0-67cc-44fd-8ff2-a767b137ae91" width="300">
+
+Nintendo Switch
+==================================
+> Chiaki-ng doesn't support sleep mode, you will have to close it and reconnect if your console is put to sleep,
+> 
+> Create/Share menu is unavailable, although you can take screenshots and view them using the native album app,<br>
+
+
+Control Scheme
+==================================
+All face, bumper and shoulder buttons are mapped accordingly
+- PS Button: (-)
+- OPTIONS: (+)
+- Touchpad: touchscreen<br>
+(to activate a press, swipe or press on a border/side of the touchscreen)
+
 Nintendo Switch build instructions
 ==================================
 this project requires the devkitpro toolchain.
