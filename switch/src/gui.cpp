@@ -152,11 +152,11 @@ void HostInterface::Wakeup(brls::View *view)
 		int r = host->Wakeup();
 		if(r == 0)
 		{
-			brls::Application::notify("Wakeup packet sent to PlayStation");
+			brls::Application::notify("Wakeup request sent");
 		}
 		else
 		{
-			brls::Application::notify("Wakeup packet sent, no response from PlayStation");
+			brls::Application::notify("Request sent, no response");
 		}
 	}
 }
@@ -171,14 +171,22 @@ void HostInterface::Connect(brls::View *view)
 		brls::Application::crash("Undefined PlayStation remote version");
 	}
 
-	// ignore state for remote hosts
+	// if discovered but not ready, attempt to wake up
 	if(this->host->IsDiscovered() && !this->host->IsReady())
 	{
-		// host in standby mode
-		DIALOG(ptoyp, "Your PlayStation is off, please turn it on");
-		return;
+		//brls::Application::notify("Attempting to wake up console..."); Most of the time refuses to show up
+		int result = host->Wakeup();
+		if (result == 0)
+		{
+			// Give it a few seconds
+			std::this_thread::sleep_for(std::chrono::seconds(15));
+			ConnectSession();
+		}
+		else
+		{
+			brls::Application::notify("No response");
+		}
 	}
-
 	if(!this->host->HasRPkey())
 	{
 		this->Register();
@@ -195,6 +203,7 @@ void HostInterface::ConnectSession()
 {
 	// ignore all user inputs (avoid double connect)
 	// user inputs are restored with the CloseStream
+	brls::Application::notify("Connecting");
 	brls::Application::blockInputs();
 
 	// connect host sesssion
@@ -623,7 +632,7 @@ void MainApplication::BuildAddHostConfigurationMenu(brls::List *add_host)
 
 		if(version <= CHIAKI_TARGET_PS4_UNKNOWN)
 		{
-			brls::Application::notify("No PlayStation Version provided");
+			brls::Application::notify("No PlayStation Target System provided");
 			err = true;
 		}
 
