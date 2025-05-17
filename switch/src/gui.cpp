@@ -39,9 +39,7 @@ HostInterface::HostInterface(Host *host)
 	this->addView(wakeup);
 
 	// message delimiter
-	brls::Label *info = new brls::Label(brls::LabelStyle::REGULAR,
-		"Host configuration", true);
-	this->addView(info);
+	this->addView(new brls::Header("Host configuration"));
 
 	// push opengl chiaki stream
 	// when the host is connected
@@ -174,13 +172,13 @@ void HostInterface::Connect(brls::View *view)
 	// if discovered but not ready, attempt to wake up
 	if(this->host->IsDiscovered() && !this->host->IsReady())
 	{
-		//brls::Application::notify("Attempting to wake up console..."); Most of the time refuses to show up
+		brls::Application::notify("Attempting to wake up console...");
 		int result = host->Wakeup();
 		if (result == 0)
 		{
-			// Give it a few seconds
-			std::this_thread::sleep_for(std::chrono::seconds(15));
-			ConnectSession();
+			brls::Application::notify("PlayStation is ready");
+			//std::this_thread::sleep_for(std::chrono::seconds(5));
+			//ConnectSession();
 		}
 		else
 		{
@@ -519,10 +517,8 @@ bool MainApplication::BuildConfigurationMenu(brls::List *ls, Host *host)
 	ls->addView(haptic);
 
 	if(host != nullptr)
-	{	
-	    brls::Label *info = new brls::Label(brls::LabelStyle::REGULAR,
-		"Host information", true);
-	    ls->addView(info);
+	{
+	    ls->addView(new brls::Header("Host information"));
 	
 	    std::string host_name_string = this->settings->GetHostName(host);
 	    brls::ListItem *host_name = new brls::ListItem("PS Hostname");
