@@ -122,7 +122,9 @@ jobs:
 
       - name: Configure chiaki-ng
         run: |
-          cmake -S . -B build -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DCHIAKI_ENABLE_CLI=OFF -DCMAKE_PREFIX_PATH="${QT_PATH}/${QT_VERSION}/mingw_64"
+          export QT_DIR="$(find ${QT_PATH} -maxdepth 1 -type d -name "${QT_VERSION}")"
+          echo "QT_DIR=${QT_DIR}" >> $GITHUB_ENV
+          cmake -S . -B build -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DCHIAKI_ENABLE_CLI=OFF -DCMAKE_PREFIX_PATH="${QT_DIR}/mingw_64"
 
       - name: Build chiaki-ng
         run: |
@@ -132,8 +134,8 @@ jobs:
         run: |
           mkdir chiaki-ng-Win
           cp build/gui/chiaki.exe chiaki-ng-Win
-          export PATH="${QT_PATH}/${QT_VERSION}/mingw_64/bin:${PATH}"
           export PATH="${{ github.workspace }}/build/third-party/cpp-steam-tools:${PATH}"
+          export PATH="${QT_DIR}/mingw_64/bin:${PATH}"        
           echo chiaki-ng-Win/chiaki.exe > tmp0.txt
           while [ -e tmp0.txt ]
           do
@@ -152,12 +154,6 @@ jobs:
           RELEASE_PACKAGE_FILE="chiaki-ng-win_x64-MSYS2-portable-$CHIAKI_VERSION_MAJOR.$CHIAKI_VERSION_MINOR.$CHIAKI_VERSION_PATCH-test-build-${{ github.sha }}.zip"
           zip -r $RELEASE_PACKAGE_FILE chiaki-ng-Win
           echo "RELEASE_PACKAGE_PATH=${RELEASE_PACKAGE_FILE}" >> $GITHUB_ENV
-
-      - name: Compile .ISS to .EXE Installer
-        uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
-        with:
-          path: "scripts/chiaki-ng.iss"
-          options: /O+
 
       - name: Upload chiaki-ng Artifact
         uses: nanoufo/action-upload-artifacts-and-release-assets@v2
@@ -294,12 +290,6 @@ jobs:
           RELEASE_PACKAGE_FILE="chiaki-ng-win_arm64-MSYS2-portable-$CHIAKI_VERSION_MAJOR.$CHIAKI_VERSION_MINOR.$CHIAKI_VERSION_PATCH-test-build-${{ github.sha }}.zip"
           zip -r $RELEASE_PACKAGE_FILE chiaki-ng-Win
           echo "RELEASE_PACKAGE_PATH=${RELEASE_PACKAGE_FILE}" >> $GITHUB_ENV
-
-      - name: Compile .ISS to .EXE Installer
-        uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
-        with:
-          path: "scripts/chiaki-ng.iss"
-          options: /O+
 
       - name: Upload chiaki-ng Artifact
         uses: nanoufo/action-upload-artifacts-and-release-assets@v2
@@ -509,12 +499,15 @@ jobs:
   build-flatpak_x64:
     name: Build chiaki-ng flatpak bundle x64
     runs-on: ubuntu-latest
-    
+    permissions:
+      contents: write
+    needs: create-release
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           submodules: 'recursive'
+          path: 'chiaki-ng'
 
       - name: Install dependencies
         run: |
@@ -529,6 +522,7 @@ jobs:
           flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
           flatpak install org.kde.Sdk//6.8 -y
           flatpak install org.kde.Platform//6.8 -y
+          flatpak install io.qt.qtwebengine.BaseApp//6.8 -y
           flatpak update --appstream --assumeyes
 
       - name: Build Flatpak package
@@ -562,12 +556,15 @@ jobs:
   build-flatpak_arm64:
     name: Build chiaki-ng flatpak bundle arm64
     runs-on: ubuntu-24.04-arm
-    
+    permissions:
+      contents: write
+    needs: create-release
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           submodules: 'recursive'
+          path: 'chiaki-ng'
 
       - name: Install dependencies
         run: |
@@ -582,6 +579,7 @@ jobs:
           flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
           flatpak install org.kde.Sdk//6.8 -y
           flatpak install org.kde.Platform//6.8 -y
+          flatpak install io.qt.qtwebengine.BaseApp//6.8 -y
           flatpak update --appstream --assumeyes
 
       - name: Build Flatpak package
